@@ -14,7 +14,7 @@ import android.widget.TextView;
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
     Button LoginButton;
-    EditText enterNetID, enterPassword;
+    EditText enterNetID, enterPassword;    
     TextView linkRegister;
 
     UserLocalData userLocalData;
