@@ -18,6 +18,13 @@ public class UserLocalData  {
         ueditor.putString("password", user.password);
         ueditor.commit();
     }
+    public boolean getUserLoggedIn() {
+        if (userLocal.getBoolean("loggedIn", false) == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     public UserData getLoggedIn() {
         String name = userLocal.getString("name", "");
         String netID = userLocal.getString("netID", "");

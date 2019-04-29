@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
     Button LoginButton;
-    EditText enterNetID, enterPassword;    
+    EditText enterNetID, enterPassword;
     TextView linkRegister;
 
     UserLocalData userLocalData;
@@ -37,6 +38,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.LoginButton:
+                String netID = enterNetID.getText().toString();
+                String password = enterPassword.getText().toString();
+
+                UserData userData = new UserData(netID, password);
+
+                authenticate(userData);
+
                 UserData user = new UserData(null, null);
                 userLocalData.store(user);
                 userLocalData.setLoggedIn(true);
@@ -47,5 +55,31 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 startActivity(new Intent(this, Register.class));
                 break;
         }
+    }
+
+    private void authenticate(UserData userData) {
+        ServerRequest serverRequest = new ServerRequest(this);
+        serverRequest.fetchUserDataInBackground(userData, new GetUserCallBack() {
+            @Override
+            public void done(UserData returnedUser) {
+                if (returnedUser == null) {
+                    showErrorMessage();
+                } else {
+                    logUserIn(returnedUser);
+                }
+            }
+        });
+    }
+    private void showErrorMessage() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
+        builder.setMessage("Incorrect user details");
+        builder.setPositiveButton("Okay", null);
+        builder.show();
+    }
+    private void logUserIn(UserData returnedUser) {
+        userLocalData.store(returnedUser);
+        userLocalData.setLoggedIn(true);
+
+        startActivity(new Intent(this, Home.class));
     }
 }
